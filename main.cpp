@@ -47,7 +47,7 @@ int main(){
 	outputFile.open ( outputFileName );
 	
 	outputFile << "IN;\n";
-	outputFile << "PU0,0;\n";
+	outputFile << "SP0;\n";
 	
 	outputFile << "PD" << sourceDimensions[X][0] << ",0;\n";
 	outputFile << "PD" << sourceDimensions[X][0] << "," << sourceDimensions[Y][0] << ";\n";
