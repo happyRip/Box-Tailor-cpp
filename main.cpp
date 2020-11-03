@@ -2,10 +2,8 @@
 #include <fstream>
 #include <vector>
 #include <string>
-
-#define X 0
-#define Y 1
-#define Unit 40 //40 units per mm, 1016 units per inch
+#include "defines.h"
+#include "functions.h"
 
 using std::cin;
 using std::cout;
@@ -16,9 +14,6 @@ using std::string;
 
 unsigned int howManyObjects;
 vector<double> sourceDimensions[2];
-
-void tailor( double x, double y );
-string drawLine( double originX, double originY, double length, double angle );
 
 int main(){
 	cout << "Wprowadz ilosc obiektow:" << endl;
@@ -38,7 +33,7 @@ int main(){
 		sourceDimensions[X].push_back( tempX * Unit );
 		sourceDimensions[Y].push_back( tempY * Unit );
 	}
-//plik wynikowy	
+//resultant file	
 	string outputFileName;
 	cout << "Jak ma sie nazywac plik wynikowy?" << endl;
 	cin >> outputFileName;
@@ -57,9 +52,4 @@ int main(){
 	outputFile << "PU;";
 	
 	outputFile.close();
-}
-
-string drawLine( double originX, double originY, double length, double angle )
-{
-	
 }
