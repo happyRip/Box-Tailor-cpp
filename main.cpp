@@ -12,6 +12,7 @@ using std::ofstream;
 using std::vector;
 using std::string;
 
+double originX, originY, packThk;
 unsigned int howManyObjects;
 vector<double> sourceDimensions[2];
 
@@ -37,19 +38,18 @@ int main(){
 	string outputFileName;
 	cout << "Jak ma sie nazywac plik wynikowy?" << endl;
 	cin >> outputFileName;
-	
+
+	originX = originY = 0;
+
 	ofstream outputFile;
 	outputFile.open ( outputFileName );
+	outputFile << "IN;\nLT;\nSP1;\n"; //initialize file
+	outputFile.close();
 	
-	outputFile << "IN;\n";
+	packThk = 1000; //sizeZ
+	tailor( &outputFileName, originX, originY, sourceDimensions[X][0] + foamThk, sourceDimensions[Y][0] + foamThk, packThk );
+	
+	outputFile.open ( outputFileName, std::ios::app );
 	outputFile << "SP0;\n";
-	
-	outputFile << "PD" << sourceDimensions[X][0] << ",0;\n";
-	outputFile << "PD" << sourceDimensions[X][0] << "," << sourceDimensions[Y][0] << ";\n";
-	outputFile << "PD0," << sourceDimensions[Y][0] << ";\n";
-	outputFile << "PD0,0;\n";
-	
-	outputFile << "PU;";
-	
 	outputFile.close();
 }

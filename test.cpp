@@ -4,7 +4,7 @@
 
 using namespace std;
 
-double target, A[100];
+double target, A[1000000];
 int n, result;
 
 int main()

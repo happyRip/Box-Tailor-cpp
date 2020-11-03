@@ -1,8 +1,16 @@
+#include <cstdlib>
+#include <string>
+
+using std::string;
+using std::ofstream;
+
 //function declarations go here
 
-//void tailor( double x, double y );
+string line( double * originX, double * originY, double distanceX, double distanceY );
 
-//string drawLine( double originX, double originY, double length, double angle );
+string move( double * originX, double * originY, double distanceX, double distanceY );
+
+void tailor( string * outputFileName, double originX, double originY, double sizeX, double sizeY, double sizeZ );
 
 int lessOrEqual( double * array, int n, double target );
 
