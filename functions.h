@@ -1,10 +1,18 @@
+#include <utility>
 #include <cstdlib>
 #include <string>
 
+using std::pair;
 using std::string;
+using std::vector;
 using std::ofstream;
 
 //function declarations go here
+pair<int,int> getValues( string line );
+
+void getExtremes( int x, int y, vector<pii> & Extremes );
+
+pair<int,int> calculateSize( string fileName );
 
 string line( double * originX, double * originY, double distanceX, double distanceY );
 

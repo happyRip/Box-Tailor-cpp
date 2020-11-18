@@ -12,12 +12,12 @@ using std::ofstream;
 using std::vector;
 using std::string;
 
-double originX, originY, packThk;
+double originX, originY;
 unsigned int howManyObjects;
-vector<double> sourceDimensions[2];
+vector<pii> sourceDimensions;
 
 int main(){
-	cout << "Wprowadz ilosc obiektow:" << endl;
+	cout << "Enter the number of objecs: ";
 	while( cin >> howManyObjects ){
 		if( howManyObjects > 0 )
 			break;
@@ -26,17 +26,15 @@ int main(){
 	}
 	
 	for( unsigned int i = 0; i < howManyObjects; ++i ){
-		double tempX, tempY;
+		string inputFileName;
+		cout << "Enter input file name: ";
+		cin >> inputFileName;
 		
-		cout << "Wprowadz wymiary obiektu ( x, y )[mm]:" << endl;
-		cin >> tempX >> tempY;
-		
-		sourceDimensions[X].push_back( tempX * Unit );
-		sourceDimensions[Y].push_back( tempY * Unit );
+		sourceDimensions.push_back( calculateSize( inputFileName ) );
 	}
 //resultant file	
 	string outputFileName;
-	cout << "Jak ma sie nazywac plik wynikowy?" << endl;
+	cout << "Enter output file name: ";
 	cin >> outputFileName;
 
 	originX = originY = 0;
@@ -45,9 +43,8 @@ int main(){
 	outputFile.open ( outputFileName );
 	outputFile << "IN;\nLT;\nSP1;\n"; //initialize file
 	outputFile.close();
-	
-	packThk = 1000; //sizeZ
-	tailor( &outputFileName, originX, originY, sourceDimensions[X][0] + foamThk, sourceDimensions[Y][0] + foamThk, packThk );
+
+	tailor( &outputFileName, originX, originY, sourceDimensions[0].X + foamThk, sourceDimensions[0].Y + foamThk, packThk );
 	
 	outputFile.open ( outputFileName, std::ios::app );
 	outputFile << "SP0;\n";

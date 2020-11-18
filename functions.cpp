@@ -1,14 +1,82 @@
+#include <string>
+#include <vector>
+#include <time.h>
+#include <climits>
+#include <utility>
 #include <cstdlib>
 #include <fstream>
-#include <string>
-#include <time.h>
+#include <iostream>
 #include "defines.h"
 
+using std::min;
+using std::max;
+using std::cin;
+using std::cout;
+using std::endl;
+using std::pair;
 using std::string;
+using std::vector;
+using std::ifstream;
 using std::ofstream;
 using std::to_string;
+using std::make_pair;
 
 //functions code goes here
+
+pair<int,int> getValues( string line ){
+	pair<int,int> result( 0, 0 );
+	bool second = false;
+	
+	for( int i = 0; i < line.length(); ++i ){
+			if( !isdigit( line[i] ) ){
+				if( line[i] == ' ' && isdigit( line[i+1] ) ) //X and Y coordinates are separated by ' '
+					second = true;
+				continue;
+			}
+			if( second ){
+				result.Y *= 10;
+				result.Y += ( line[i] - '0' );
+			}else {
+				result.X *= 10;
+				result.X += ( line[i] - '0' );
+			}
+		}
+	return result;
+}
+
+void getExtremes( int x, int y, vector<pii> & Extremes ){
+	Extremes[MAX].X = max( Extremes[MAX].X, x );
+	Extremes[MAX].Y = max( Extremes[MAX].Y, y );
+	Extremes[MIN].X = min( Extremes[MIN].X, x );
+	Extremes[MIN].Y = min( Extremes[MIN].Y, y );
+}
+
+
+pair<int,int> calculateSize( string fileName ){ //looks for extreme values of an object in a *.plt file to find its dimensions for box fitting purposes
+	ifstream inputFile;
+	
+	inputFile.open( fileName );
+	
+	string line;	
+	vector<pii> Extremes; // [0].first - [MIN].X; [1].second - [MAX].Y
+	Extremes.push_back( make_pair( INT_MAX, INT_MAX ) );
+	Extremes.push_back( make_pair( INT_MIN, INT_MIN ) );
+	
+	while( getline( inputFile, line ) ){
+		pair<int,int> value;
+
+		if( line[0] == 'P' ){
+			value = getValues( line );
+			getExtremes( value.X, value.Y, Extremes );
+		}
+	}
+	cout << fileName << ":\n	X: " << ( Extremes[MAX].X - Extremes[MIN].X ) / Unit << "mm\n	Y: " << ( Extremes[MAX].Y  - Extremes[MIN].Y  ) / Unit << "mm\n";
+	
+	inputFile.close();
+	
+	pair<int,int> result( Extremes[MAX].X - Extremes[MIN].X, Extremes[MAX].Y  - Extremes[MIN].Y );
+	return result;
+}
 
 string line( double * originX, double * originY, double distanceX, double distanceY ){
 	*originX += distanceX;
