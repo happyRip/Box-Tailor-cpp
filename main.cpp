@@ -12,7 +12,6 @@ using std::ofstream;
 using std::vector;
 using std::string;
 
-double originX, originY;
 unsigned int howManyObjects;
 vector<pii> sourceDimensions;
 
@@ -32,21 +31,12 @@ int main(){
 		
 		sourceDimensions.push_back( calculateSize( inputFileName ) );
 	}
-//resultant file	
+	
 	string outputFileName;
 	cout << "Enter output file name: ";
 	cin >> outputFileName;
 
-	originX = originY = 0;
-
-	ofstream outputFile;
-	outputFile.open ( outputFileName );
-	outputFile << "IN;\nLT;\nSP1;\n"; //initialize file
-	outputFile.close();
-
-	tailor( &outputFileName, originX, originY, sourceDimensions[0].X + foamThk, sourceDimensions[0].Y + foamThk, packThk );
+	writeToFile( outputFileName, sourceDimensions );
 	
-	outputFile.open ( outputFileName, std::ios::app );
-	outputFile << "SP0;\n";
-	outputFile.close();
+	return 0;
 }

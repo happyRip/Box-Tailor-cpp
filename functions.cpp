@@ -21,10 +21,10 @@ using std::ofstream;
 using std::to_string;
 using std::make_pair;
 
-//functions code goes here
+//function code goes here
 
-pair<int,int> getValues( string line ){
-	pair<int,int> result( 0, 0 );
+pii getValues( string line ){
+	pii result( 0, 0 );
 	bool second = false;
 	
 	for( int i = 0; i < line.length(); ++i ){
@@ -44,7 +44,7 @@ pair<int,int> getValues( string line ){
 	return result;
 }
 
-void getExtremes( int x, int y, vector<pii> & Extremes ){
+void getExtremes( int x, int y, vector<pii> & Extremes ){ 
 	Extremes[MAX].X = max( Extremes[MAX].X, x );
 	Extremes[MAX].Y = max( Extremes[MAX].Y, y );
 	Extremes[MIN].X = min( Extremes[MIN].X, x );
@@ -52,18 +52,18 @@ void getExtremes( int x, int y, vector<pii> & Extremes ){
 }
 
 
-pair<int,int> calculateSize( string fileName ){ //looks for extreme values of an object in a *.plt file to find its dimensions for box fitting purposes
+pii calculateSize( string fileName ){ //looks for extreme values of an object in a *.plt file to find its dimensions for box fitting purposes
 	ifstream inputFile;
 	
 	inputFile.open( fileName );
 	
 	string line;	
-	vector<pii> Extremes; // [0].first - [MIN].X; [1].second - [MAX].Y
+	vector<pii> Extremes; // [0].first = [MIN].X; [1].second = [MAX].Y
 	Extremes.push_back( make_pair( INT_MAX, INT_MAX ) );
 	Extremes.push_back( make_pair( INT_MIN, INT_MIN ) );
 	
 	while( getline( inputFile, line ) ){
-		pair<int,int> value;
+		pii value;
 
 		if( line[0] == 'P' ){
 			value = getValues( line );
@@ -74,81 +74,225 @@ pair<int,int> calculateSize( string fileName ){ //looks for extreme values of an
 	
 	inputFile.close();
 	
-	pair<int,int> result( Extremes[MAX].X - Extremes[MIN].X, Extremes[MAX].Y  - Extremes[MIN].Y );
+	pii result( Extremes[MAX].X - Extremes[MIN].X, Extremes[MAX].Y  - Extremes[MIN].Y );
 	return result;
 }
 
-string line( double * originX, double * originY, double distanceX, double distanceY ){
-	*originX += distanceX;
-	*originY += distanceY;
+string line( pii & origin, pii distance ){
+	origin.X += distance.X;
+	origin.Y += distance.Y;
 	
 	string result = "PD"; //pen down
 	
-	result += to_string( *originX );
+	result += to_string( origin.X );
 	result += " ";
-	result += to_string( *originY );
+	result += to_string( origin.Y );
 	result += ";\n";
 	
 	return result;
 }
 
-string move( double * originX, double * originY, double distanceX, double distanceY ){
-	*originX += distanceX;
-	*originY += distanceY;
+string lineX( pii & origin, int distanceX ){
+	origin.X += distanceX;
+	
+	string result = "PD"; //pen down
+	
+	result += to_string( origin.X );
+	result += " ";
+	result += to_string( origin.Y );
+	result += ";\n";
+	
+	return result;
+}
+
+string lineY( pii & origin, int distanceY ){
+	origin.Y += distanceY;
+	
+	string result = "PD"; //pen down
+	
+	result += to_string( origin.X );
+	result += " ";
+	result += to_string( origin.Y );
+	result += ";\n";
+	
+	return result;
+}
+
+string move( pii & origin, pii distance ){
+	origin.X += distance.X;
+	origin.Y += distance.Y;
 	
 	string result = "PU"; //pen up
 	
-	result += to_string( *originX );
+	result += to_string( origin.X );
 	result += " ";
-	result += to_string( *originY );
+	result += to_string( origin.Y );
 	result += ";\n";
 	
 	return result;
 }
 
-void tailor( string * outputFileName, double originX, double originY, double sizeX, double sizeY, double sizeZ ){
+string moveX( pii & origin, int distanceX ){
+	origin.X += distanceX;
 	
+	string result = "PU"; //pen up
+	
+	result += to_string( origin.X );
+	result += " ";
+	result += to_string( origin.Y );
+	result += ";\n";
+	
+	return result;
+}
+
+string moveY( pii & origin, int distanceY ){
+	origin.Y += distanceY;
+	
+	string result = "PU"; //pen up
+	
+	result += to_string( origin.X );
+	result += " ";
+	result += to_string( origin.Y );
+	result += ";\n";
+	
+	return result;
+}
+
+void tailor( string * outputFileName, pii & origin, pair <double,double> size, double sizeZ ){
 	ofstream outputFile;
 	outputFile.open( *outputFileName, std::ios::app );
 	
-	outputFile << move( &originX, &originY, 3 * wallThk + sizeZ, 0 ); 
-	outputFile << line( &originX, &originY, 2 * sizeZ + sizeX, 0 );
-	outputFile << line( &originX, &originY, 0, -sizeZ );
-	outputFile << line( &originX, &originY, -sizeZ, 0 );
-	outputFile << line( &originX, &originY, 0, -wallThk );
-	outputFile << line( &originX, &originY, 2 * wallThk + sizeZ, 0 );
-	outputFile << line( &originX, &originY, 0, sizeZ );
-	outputFile << line( &originX, &originY, sizeX, 0 );
-	outputFile << line( &originX, &originY, 0, -sizeZ );
-	outputFile << line( &originX, &originY, sizeZ, 0 );
-	outputFile << line( &originX, &originY, 0, -sizeY );
-	outputFile << line( &originX, &originY, -sizeZ, 0 );
-	outputFile << line( &originX, &originY, 0, -sizeZ );
-	outputFile << line( &originX, &originY, -sizeX, 0 );
-	outputFile << line( &originX, &originY, 0, sizeZ );
-	outputFile << line( &originX, &originY, -( 2 * wallThk + sizeZ ), 0 );
-	outputFile << line( &originX, &originY, 0, -wallThk );
-	outputFile << line( &originX, &originY, sizeZ, 0 );
-	outputFile << line( &originX, &originY, 0, -sizeZ );
-	outputFile << line( &originX, &originY, -( 2 * sizeZ + sizeX ), 0 );
-	outputFile << line( &originX, &originY, 0, sizeZ );
-	outputFile << line( &originX, &originY, sizeZ, 0 );
-	outputFile << line( &originX, &originY, 0, wallThk );
-	outputFile << line( &originX, &originY, -( 2 * ( sizeZ + wallThk ) ), 0 );
-	outputFile << line( &originX, &originY, 0, sizeY / 5 );
-	outputFile << line( &originX, &originY, -( 1.5 * wallThk ), 0 );
-	outputFile << line( &originX, &originY, 0, sizeY / 5 );
-	outputFile << line( &originX, &originY, 1.5 * wallThk, 0 );
-	outputFile << line( &originX, &originY, 0, sizeY / 5 );
-	outputFile << line( &originX, &originY, -( 1.5 * wallThk ), 0 );
-	outputFile << line( &originX, &originY, 0, sizeY / 5 );
-	outputFile << line( &originX, &originY, 1.5 * wallThk, 0 );
-	outputFile << line( &originX, &originY, 0, sizeY / 5 );
-	outputFile << line( &originX, &originY, 2 * ( wallThk + sizeZ ), 0 );
-	outputFile << line( &originX, &originY, 0, wallThk );
-	outputFile << line( &originX, &originY, -sizeZ, 0 );
-	outputFile << line( &originX, &originY, 0, sizeZ );
+	pii basePoint = origin;
 	
+	outputFile << "SP1;\n"; //select pen 1: cutting
+	
+	outputFile << moveX( origin, 3 * wallThk + sizeZ ); 
+	outputFile << lineX( origin, 2 * sizeZ + size.X );
+	outputFile << lineY( origin, -sizeZ );
+	outputFile << lineX( origin, -sizeZ );
+	outputFile << lineY( origin, -wallThk );
+	outputFile << lineX( origin, 2 * wallThk + sizeZ );
+	outputFile << lineY( origin, sizeZ );
+	outputFile << lineX( origin, size.X );
+	outputFile << lineY( origin,  -sizeZ );
+	outputFile << lineX( origin, sizeZ );
+	outputFile << lineY( origin, -size.Y );
+	outputFile << lineX( origin, -sizeZ );
+	outputFile << lineY( origin, -sizeZ );
+	outputFile << lineX( origin, -size.X );
+	outputFile << lineY( origin, sizeZ );
+	outputFile << lineX( origin, -( 2 * wallThk + sizeZ ) );
+	outputFile << lineY( origin, -wallThk );
+	outputFile << lineX( origin, sizeZ );
+	outputFile << lineY( origin, -sizeZ );
+	outputFile << lineX( origin, -( 2 * sizeZ + size.X ) );
+	outputFile << lineY( origin, sizeZ );
+	outputFile << lineX( origin, sizeZ );
+	outputFile << lineY( origin, wallThk );
+	outputFile << lineX( origin, -( 2 * ( sizeZ + wallThk ) ) );
+	outputFile << lineY( origin, size.Y / 5 );
+	outputFile << lineX( origin, -( 1.5 * wallThk ) );
+	outputFile << lineY( origin, size.Y / 5 );
+	outputFile << lineX( origin, 1.5 * wallThk );
+	outputFile << lineY( origin, size.Y / 5 );
+	outputFile << lineX( origin, -( 1.5 * wallThk ) );
+	outputFile << lineY( origin, size.Y / 5 );
+	outputFile << lineX( origin, 1.5 * wallThk );
+	outputFile << lineY( origin, size.Y / 5 );
+	outputFile << lineX( origin, 2 * ( wallThk + sizeZ ) );
+	outputFile << lineY( origin, wallThk );
+	outputFile << lineX( origin, -sizeZ );
+	outputFile << lineY( origin, sizeZ );
+	
+	origin = basePoint;
+	
+	outputFile << move( origin, make_pair( 4 * wallThk + 2 * sizeZ, -( sizeZ + wallThk + 0.4 * size.Y ) ) );
+	outputFile << lineY( origin, size.Y / 5 );
+	outputFile << lineX( origin, wallThk );
+	outputFile << lineY( origin, -size.Y / 5 );
+	outputFile << lineX( origin, -wallThk );
+	
+	outputFile << moveY( origin, -2 * size.Y / 5 );
+	outputFile << lineY( origin, size.Y / 5 );
+	outputFile << lineX( origin, wallThk );
+	outputFile << lineY( origin, -size.Y / 5 );
+	outputFile << lineX( origin, -wallThk );
+	
+	outputFile << "SP2;\n"; //select pen 2: engraving
+	
+	origin = basePoint;
+	
+	outputFile << move( origin, make_pair( 1.5 * wallThk + sizeZ, -sizeZ - wallThk ) );
+	outputFile << lineY( origin, -size.Y );
+	
+	outputFile << moveX( origin, wallThk );
+	outputFile << lineY( origin, size.Y );
+	
+	outputFile << move( origin, make_pair( sizeZ + 0.5 * wallThk, wallThk + sizeZ ) );
+	outputFile << lineY( origin, -sizeZ );
+	
+	outputFile << moveY( origin, -wallThk );
+	outputFile << lineY( origin, -size.Y );
+	
+	outputFile << moveY( origin, -wallThk );
+	outputFile << lineY( origin, -sizeZ );
+	
+	outputFile << moveY( origin, sizeZ + wallThk / 2 );
+	outputFile << lineX( origin, size.X );
+	
+	outputFile << moveY( origin, -wallThk / 2 - sizeZ );
+	outputFile << lineY( origin, sizeZ );
+
+	outputFile << moveY( origin, wallThk );
+	outputFile << lineY( origin, size.Y );
+	
+	outputFile << moveY( origin, wallThk + sizeZ );
+	outputFile << lineY( origin, -sizeZ );
+	
+	outputFile << moveY( origin, -wallThk / 2 );
+	outputFile << lineX( origin, -size.X );
+	
+	outputFile << move( origin, make_pair( size.X + sizeZ + 3 * wallThk / 2, -wallThk / 2 ) );
+	outputFile << lineY( origin, -size.Y );
+	
+	outputFile << moveX( origin, wallThk / 2 );
+	outputFile << lineX( origin, size.X );
+	
+	outputFile << lineY( origin, size.Y );
+	
+	outputFile << lineX( origin, -size.X );
+	
+	origin = basePoint;
+	
+	outputFile.close();
+}
+
+void writeToFile( string fileName, vector<pii> & sourceDimensions ){
+	ofstream outputFile;
+	
+	outputFile.open( fileName );
+	outputFile << "IN;\nLT;\n"; //initialize file
+	outputFile.close();
+	
+	pii origin( 0, 0 );
+	for( int i = 0; i < sourceDimensions.size(); ++i ){
+		pii boxDimensions( 
+			4 * packThk + 6 * wallThk + 2 * ( sourceDimensions[i].X + foamThk ),
+			2 * packThk + 3 * wallThk + ( sourceDimensions[i].Y + foamThk ) 
+		);
+		
+		tailor( 
+			&fileName, 
+			origin, 
+			make_pair( (double)( sourceDimensions[i].X + foamThk ), (double)( sourceDimensions[i].Y + foamThk ) ), 
+			packThk
+		);
+				
+		origin = make_pair( 0, origin.Y + boxDimensions.Y );
+		
+	}
+	outputFile.open ( fileName, std::ios::app );
+	outputFile << "SP0;\n";
 	outputFile.close();
 }
 
