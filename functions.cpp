@@ -24,13 +24,13 @@ using std::make_pair;
 
 //function code goes here
 
-pii getValues( string line ){ //looks for X Y coordinates in a single line of HPGL code
-	pii result( 0, 0 );
+pll getValues( string line ){ //looks for X Y coordinates in a single line of HPGL code
+	pll result( 0, 0 );
 	bool second = false;
 	
-	for( int i = 0; i < line.length(); ++i ){
+	for( ll i = 0; i < line.length(); ++i ){
 			if( !isdigit( line[i] ) ){
-				if( line[i] == ' ' && isdigit( line[i+1] ) ) //X and Y coordinates are separated by ' '
+				if( line[i] == ' ' && ( isdigit( line[i+1] ) || isdigit( line[i+2] ) ) ) //X and Y coordinates are separated by ' '
 					second = true;
 				continue;
 			}
@@ -56,7 +56,7 @@ string getFileName( string filePath ){
 	return filePath;
 }
 
-void getExtremes( int x, int y, vector<pii> & Extremes ){ 
+void getExtremes( ll x, ll y, vector<pll> & Extremes ){ 
 	Extremes[MAX].X = max( Extremes[MAX].X, x );
 	Extremes[MAX].Y = max( Extremes[MAX].Y, y );
 	Extremes[MIN].X = min( Extremes[MIN].X, x );
@@ -64,18 +64,18 @@ void getExtremes( int x, int y, vector<pii> & Extremes ){
 }
 
 
-pii calculateSize( string fileName ){ //looks for extreme values of an object in a *.plt file to find its dimensions for box fitting purposes
+pll calculateSize( string fileName ){ //looks for extreme values of an object in a *.plt file to find its dimensions for box fitting purposes
 	ifstream inputFile;
 	
 	inputFile.open( fileName );
 	
 	string line;	
-	vector<pii> Extremes; // [0].first = [MIN].X; [1].second = [MAX].Y
+	vector<pll> Extremes; // [0].first = [MIN].X; [1].second = [MAX].Y
 	Extremes.push_back( make_pair( INT_MAX, INT_MAX ) );
 	Extremes.push_back( make_pair( INT_MIN, INT_MIN ) );
 	
 	while( getline( inputFile, line ) ){
-		pii value;
+		pll value;
 
 		if( line[0] == 'P' ){
 			value = getValues( line );
@@ -86,11 +86,11 @@ pii calculateSize( string fileName ){ //looks for extreme values of an object in
 	
 	inputFile.close();
 	
-	pii result( Extremes[MAX].X - Extremes[MIN].X, Extremes[MAX].Y  - Extremes[MIN].Y );
+	pll result( Extremes[MAX].X - Extremes[MIN].X, Extremes[MAX].Y  - Extremes[MIN].Y );
 	return result;
 }
 
-string line( pii & origin, pii distance ){
+string line( pll & origin, pll distance ){
 	origin.X += distance.X;
 	origin.Y += distance.Y;
 	
@@ -104,7 +104,7 @@ string line( pii & origin, pii distance ){
 	return result;
 }
 
-string lineX( pii & origin, int distanceX ){
+string lineX( pll & origin, ll distanceX ){
 	origin.X += distanceX;
 	
 	string result = "PD"; //pen down
@@ -117,7 +117,7 @@ string lineX( pii & origin, int distanceX ){
 	return result;
 }
 
-string lineY( pii & origin, int distanceY ){
+string lineY( pll & origin, ll distanceY ){
 	origin.Y += distanceY;
 	
 	string result = "PD"; //pen down
@@ -130,7 +130,7 @@ string lineY( pii & origin, int distanceY ){
 	return result;
 }
 
-string move( pii & origin, pii distance ){
+string move( pll & origin, pll distance ){
 	origin.X += distance.X;
 	origin.Y += distance.Y;
 	
@@ -144,7 +144,7 @@ string move( pii & origin, pii distance ){
 	return result;
 }
 
-string moveX( pii & origin, int distanceX ){
+string moveX( pll & origin, ll distanceX ){
 	origin.X += distanceX;
 	
 	string result = "PU"; //pen up
@@ -157,7 +157,7 @@ string moveX( pii & origin, int distanceX ){
 	return result;
 }
 
-string moveY( pii & origin, int distanceY ){
+string moveY( pll & origin, ll distanceY ){
 	origin.Y += distanceY;
 	
 	string result = "PU"; //pen up
@@ -170,11 +170,11 @@ string moveY( pii & origin, int distanceY ){
 	return result;
 }
 
-void tailor( string * outputFileName, pii & origin, pair <double,double> size, double sizeZ ){
+void tailor( string * outputFileName, pll & origin, pair <ll,ll> size, ll sizeZ ){
 	ofstream outputFile;
 	outputFile.open( *outputFileName, std::ios::app );
 	
-	pii basePoint = origin;
+	pll basePoll = origin;
 	
 	outputFile << "SP1;\n"; //select pen 1: cutting
 	
@@ -216,7 +216,7 @@ void tailor( string * outputFileName, pii & origin, pair <double,double> size, d
 	outputFile << lineX( origin, -sizeZ );
 	outputFile << lineY( origin, sizeZ );
 	
-	origin = basePoint;
+	origin = basePoll;
 	
 	outputFile << move( origin, make_pair( 4 * wallThk + 2 * sizeZ, -( sizeZ + wallThk + 0.4 * size.Y ) ) );
 	outputFile << lineY( origin, size.Y / 5 );
@@ -232,7 +232,7 @@ void tailor( string * outputFileName, pii & origin, pair <double,double> size, d
 	
 	outputFile << "SP2;\n"; //select pen 2: engraving
 	
-	origin = basePoint;
+	origin = basePoll;
 	
 	outputFile << move( origin, make_pair( 1.5 * wallThk + sizeZ, -sizeZ - wallThk ) );
 	outputFile << lineY( origin, -size.Y );
@@ -274,21 +274,21 @@ void tailor( string * outputFileName, pii & origin, pair <double,double> size, d
 	
 	outputFile << lineX( origin, -size.X );
 	
-	origin = basePoint;
+	origin = basePoll;
 	
 	outputFile.close();
 }
 
-void writeToFile( string fileName, vector<pii> & sourceDimensions ){
+void writeToFile( string fileName, vector<pll> & sourceDimensions ){
 	ofstream outputFile;
 	
 	outputFile.open( fileName );
 	outputFile << "IN;\nLT;\n"; //initialize file
 	outputFile.close();
 	
-	pii origin( 0, 0 );
-	for( int i = 0; i < sourceDimensions.size(); ++i ){
-		pii boxDimensions( 
+	pll origin( 0, 0 );
+	for( ll i = 0; i < sourceDimensions.size(); ++i ){
+		pll boxDimensions( 
 			4 * packThk + 6 * wallThk + 2 * ( sourceDimensions[i].X + foamThk ),
 			2 * packThk + 3 * wallThk + ( sourceDimensions[i].Y + foamThk ) 
 		);
@@ -296,7 +296,7 @@ void writeToFile( string fileName, vector<pii> & sourceDimensions ){
 		tailor( 
 			&fileName, 
 			origin, 
-			make_pair( (double)( sourceDimensions[i].X + foamThk ), (double)( sourceDimensions[i].Y + foamThk ) ), 
+			make_pair( (ll)( sourceDimensions[i].X + foamThk ), (ll)( sourceDimensions[i].Y + foamThk ) ), 
 			packThk
 		);
 				
@@ -307,26 +307,3 @@ void writeToFile( string fileName, vector<pii> & sourceDimensions ){
 	outputFile << "SP0;\n";
 	outputFile.close();
 }
-/*
-int lessOrEqual( double * array, int n, double target ){
-	int L = 0;
-	int R = n - 1;
-	
-	while( L < R ){
-		int M = ( L + R + 1 ) / 2;
-		
-		if( array[M] > target )
-			R = M - 1;
-		else
-			L = M;
-	}
-	
-	if( array[L] > target )
-		return -1; //if no such value that is less or equal to the target value
-	return L;
-}
-
-int getRand( int min, int max ){ //generates a random number between min and max values
-	return rand() % ( max - min + 1 ) + min;
-}
-*/

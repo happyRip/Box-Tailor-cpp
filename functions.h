@@ -8,30 +8,26 @@ using std::vector;
 using std::ofstream;
 
 //function declarations go here
-pii getValues( string line );
+pll getValues( string line );
 
 string getFileName( string filePath );
 
-void getExtremes( int x, int y, vector<pii> & Extremes );
+void getExtremes( ll x, ll y, vector<pii> & Extremes );
 
-pii calculateSize( string fileName );
+pll calculateSize( string fileName );
 
-string line( double * originX, double * originY, double distanceX, double distanceY );
+string line( ll * originX, ll * originY, ll distanceX, ll distanceY );
 
-string lineX( double * originX, double * originY, double distanceX );
+string lineX( ll * originX, ll * originY, ll distanceX );
 
-string lineY( double * originX, double * originY, double distanceY );
+string lineY( ll * originX, ll * originY, ll distanceY );
 
-string move( double * originX, double * originY, double distanceX, double distanceY );
+string move( ll * originX, ll * originY, ll distanceX, ll distanceY );
 
-string moveX( double * originX, double * originY, double distanceX );
+string moveX( ll * originX, ll * originY, ll distanceX );
 
-string moveY( double * originX, double * originY, double distanceY );
+string moveY( ll * originX, ll * originY, ll distanceY );
 
-void tailor( string * outputFileName, double originX, double originY, double sizeX, double sizeY, double sizeZ );
+void tailor( string * outputFileName, ll originX, ll originY, ll sizeX, ll sizeY, ll sizeZ );
 
-void writeToFile( string fileName, vector<pii> & sourceDimensions );
-
-int lessOrEqual( double * array, int n, double target );
-
-double getRand( double min, double max );
+void writeToFile( string fileName, vector<pll> & sourceDimensions );
