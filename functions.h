@@ -28,6 +28,6 @@ string moveX( int * originX, int * originY, int distanceX );
 
 string moveY( int * originX, int * originY, int distanceY );
 
-void tailor( string * outputFileName, double originX, double originY, double sizeX, double sizeY, double sizeZ );
+void tailor( string * outputFileName, pii origin, pair <int,int> size, int sizeZ );
 
 void writeToFile( string fileName, vector<pii> & sourceDimensions );
