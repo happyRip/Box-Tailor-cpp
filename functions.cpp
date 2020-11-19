@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <time.h>
+#include <cstdlib>
 #include <climits>
 #include <utility>
 #include <cstdlib>
@@ -23,7 +24,7 @@ using std::make_pair;
 
 //function code goes here
 
-pii getValues( string line ){
+pii getValues( string line ){ //looks for X Y coordinates in a single line of HPGL code
 	pii result( 0, 0 );
 	bool second = false;
 	
@@ -42,6 +43,17 @@ pii getValues( string line ){
 			}
 		}
 	return result;
+}
+
+string getFileName( string filePath ){
+	const size_t lastSlash = filePath.find_last_of( "\\/" );
+	
+	if ( string::npos != lastSlash )
+	{
+		filePath.erase( 0, lastSlash + 1 );
+	}
+	
+	return filePath;
 }
 
 void getExtremes( int x, int y, vector<pii> & Extremes ){ 
@@ -70,7 +82,7 @@ pii calculateSize( string fileName ){ //looks for extreme values of an object in
 			getExtremes( value.X, value.Y, Extremes );
 		}
 	}
-	cout << fileName << ":\n	X: " << ( Extremes[MAX].X - Extremes[MIN].X ) / Unit << "mm\n	Y: " << ( Extremes[MAX].Y  - Extremes[MIN].Y  ) / Unit << "mm\n";
+	cout << "  " << getFileName( fileName ) << ":\n	X: " << ( Extremes[MAX].X - Extremes[MIN].X ) / Unit << "mm\n	Y: " << ( Extremes[MAX].Y  - Extremes[MIN].Y  ) / Unit << "mm\n";
 	
 	inputFile.close();
 	
@@ -295,8 +307,8 @@ void writeToFile( string fileName, vector<pii> & sourceDimensions ){
 	outputFile << "SP0;\n";
 	outputFile.close();
 }
-
-int lessOrEqual( double * array, int n, double target ){ //binary search for a value less or equal to the target value in a sorted array
+/*
+int lessOrEqual( double * array, int n, double target ){
 	int L = 0;
 	int R = n - 1;
 	
@@ -314,6 +326,7 @@ int lessOrEqual( double * array, int n, double target ){ //binary search for a v
 	return L;
 }
 
-double getRand( double min, double max ){ //generates a random number between min and max values
-	return ( max - min ) * ( (double)rand() / (double)RAND_MAX ) + min;
+int getRand( int min, int max ){ //generates a random number between min and max values
+	return rand() % ( max - min + 1 ) + min;
 }
+*/

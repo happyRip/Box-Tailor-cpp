@@ -10,6 +10,8 @@ using std::ofstream;
 //function declarations go here
 pii getValues( string line );
 
+string getFileName( string filePath );
+
 void getExtremes( int x, int y, vector<pii> & Extremes );
 
 pii calculateSize( string fileName );
@@ -25,7 +27,6 @@ string move( double * originX, double * originY, double distanceX, double distan
 string moveX( double * originX, double * originY, double distanceX );
 
 string moveY( double * originX, double * originY, double distanceY );
-
 
 void tailor( string * outputFileName, double originX, double originY, double sizeX, double sizeY, double sizeZ );
 
