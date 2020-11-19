@@ -16,17 +16,17 @@ void getExtremes( int x, int y, vector<pii> & Extremes );
 
 pii calculateSize( string fileName );
 
-string line( int * originX, int * originY, int distanceX, int distanceY );
+string line( pii & origin, pii distance );
 
-string lineX( int * originX, int * originY, int distanceX );
+string lineX( pii & origin, int distanceX );
 
-string lineY( int * originX, int * originY, int distanceY );
+string lineY( pii & origin, int distanceY );
 
-string move( int * originX, int * originY, int distanceX, int distanceY );
+string move( pii & origin, pii distance );
 
-string moveX( int * originX, int * originY, int distanceX );
+string moveX( pii & origin, int distanceX );
 
-string moveY( int * originX, int * originY, int distanceY );
+string moveY( pii & origin, int distanceY );
 
 void tailor( string * outputFileName, pii origin, pair <int,int> size, int sizeZ );
 
