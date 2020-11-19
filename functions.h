@@ -8,26 +8,26 @@ using std::vector;
 using std::ofstream;
 
 //function declarations go here
-pll getValues( string line );
+pii getValues( string line );
 
 string getFileName( string filePath );
 
-void getExtremes( ll x, ll y, vector<pii> & Extremes );
+void getExtremes( int x, int y, vector<pii> & Extremes );
 
-pll calculateSize( string fileName );
+pii calculateSize( string fileName );
 
-string line( ll * originX, ll * originY, ll distanceX, ll distanceY );
+string line( int * originX, int * originY, int distanceX, int distanceY );
 
-string lineX( ll * originX, ll * originY, ll distanceX );
+string lineX( int * originX, int * originY, int distanceX );
 
-string lineY( ll * originX, ll * originY, ll distanceY );
+string lineY( int * originX, int * originY, int distanceY );
 
-string move( ll * originX, ll * originY, ll distanceX, ll distanceY );
+string move( int * originX, int * originY, int distanceX, int distanceY );
 
-string moveX( ll * originX, ll * originY, ll distanceX );
+string moveX( int * originX, int * originY, int distanceX );
 
-string moveY( ll * originX, ll * originY, ll distanceY );
+string moveY( int * originX, int * originY, int distanceY );
 
-void tailor( string * outputFileName, ll originX, ll originY, ll sizeX, ll sizeY, ll sizeZ );
+void tailor( string * outputFileName, double originX, double originY, double sizeX, double sizeY, double sizeZ );
 
-void writeToFile( string fileName, vector<pll> & sourceDimensions );
+void writeToFile( string fileName, vector<pii> & sourceDimensions );

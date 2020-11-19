@@ -1,7 +1,6 @@
 #include <string>
 #include <vector>
 #include <time.h>
-#include <cstdlib>
 #include <climits>
 #include <utility>
 #include <cstdlib>
@@ -24,11 +23,12 @@ using std::make_pair;
 
 //function code goes here
 
-pll getValues( string line ){ //looks for X Y coordinates in a single line of HPGL code
-	pll result( 0, 0 );
+pii getValues( string line ){
+	pii result( 0, 0 );
+
 	bool second = false;
 	
-	for( ll i = 0; i < line.length(); ++i ){
+	for( int i = 0; i < line.length(); ++i ){
 			if( !isdigit( line[i] ) ){
 				if( line[i] == ' ' && ( isdigit( line[i+1] ) || isdigit( line[i+2] ) ) ) //X and Y coordinates are separated by ' '
 					second = true;
@@ -56,7 +56,7 @@ string getFileName( string filePath ){
 	return filePath;
 }
 
-void getExtremes( ll x, ll y, vector<pll> & Extremes ){ 
+void getExtremes( int x, int y, vector<pii> & Extremes ){ 
 	Extremes[MAX].X = max( Extremes[MAX].X, x );
 	Extremes[MAX].Y = max( Extremes[MAX].Y, y );
 	Extremes[MIN].X = min( Extremes[MIN].X, x );
@@ -64,18 +64,18 @@ void getExtremes( ll x, ll y, vector<pll> & Extremes ){
 }
 
 
-pll calculateSize( string fileName ){ //looks for extreme values of an object in a *.plt file to find its dimensions for box fitting purposes
+pii calculateSize( string fileName ){ //looks for extreme values of an object in a *.plt file to find its dimensions for box fitting purposes
 	ifstream inputFile;
 	
 	inputFile.open( fileName );
 	
 	string line;	
-	vector<pll> Extremes; // [0].first = [MIN].X; [1].second = [MAX].Y
+	vector<pii> Extremes; // [0].first = [MIN].X; [1].second = [MAX].Y
 	Extremes.push_back( make_pair( INT_MAX, INT_MAX ) );
 	Extremes.push_back( make_pair( INT_MIN, INT_MIN ) );
 	
 	while( getline( inputFile, line ) ){
-		pll value;
+		pii value;
 
 		if( line[0] == 'P' ){
 			value = getValues( line );
@@ -86,11 +86,11 @@ pll calculateSize( string fileName ){ //looks for extreme values of an object in
 	
 	inputFile.close();
 	
-	pll result( Extremes[MAX].X - Extremes[MIN].X, Extremes[MAX].Y  - Extremes[MIN].Y );
+	pii result( Extremes[MAX].X - Extremes[MIN].X, Extremes[MAX].Y  - Extremes[MIN].Y );
 	return result;
 }
 
-string line( pll & origin, pll distance ){
+string line( pii & origin, pii distance ){
 	origin.X += distance.X;
 	origin.Y += distance.Y;
 	
@@ -104,7 +104,7 @@ string line( pll & origin, pll distance ){
 	return result;
 }
 
-string lineX( pll & origin, ll distanceX ){
+string lineX( pii & origin, int distanceX ){
 	origin.X += distanceX;
 	
 	string result = "PD"; //pen down
@@ -117,7 +117,7 @@ string lineX( pll & origin, ll distanceX ){
 	return result;
 }
 
-string lineY( pll & origin, ll distanceY ){
+string lineY( pii & origin, int distanceY ){
 	origin.Y += distanceY;
 	
 	string result = "PD"; //pen down
@@ -130,7 +130,7 @@ string lineY( pll & origin, ll distanceY ){
 	return result;
 }
 
-string move( pll & origin, pll distance ){
+string move( pii & origin, pii distance ){
 	origin.X += distance.X;
 	origin.Y += distance.Y;
 	
@@ -144,7 +144,7 @@ string move( pll & origin, pll distance ){
 	return result;
 }
 
-string moveX( pll & origin, ll distanceX ){
+string moveX( pii & origin, int distanceX ){
 	origin.X += distanceX;
 	
 	string result = "PU"; //pen up
@@ -157,7 +157,7 @@ string moveX( pll & origin, ll distanceX ){
 	return result;
 }
 
-string moveY( pll & origin, ll distanceY ){
+string moveY( pii & origin, int distanceY ){
 	origin.Y += distanceY;
 	
 	string result = "PU"; //pen up
@@ -170,11 +170,11 @@ string moveY( pll & origin, ll distanceY ){
 	return result;
 }
 
-void tailor( string * outputFileName, pll & origin, pair <ll,ll> size, ll sizeZ ){
+void tailor( string * outputFileName, pii origin, pair <int,int> size, int sizeZ ){
 	ofstream outputFile;
 	outputFile.open( *outputFileName, std::ios::app );
 	
-	pll basePoll = origin;
+	pii basePoint = origin;
 	
 	outputFile << "SP1;\n"; //select pen 1: cutting
 	
@@ -216,7 +216,7 @@ void tailor( string * outputFileName, pll & origin, pair <ll,ll> size, ll sizeZ 
 	outputFile << lineX( origin, -sizeZ );
 	outputFile << lineY( origin, sizeZ );
 	
-	origin = basePoll;
+	origin = basePoint;
 	
 	outputFile << move( origin, make_pair( 4 * wallThk + 2 * sizeZ, -( sizeZ + wallThk + 0.4 * size.Y ) ) );
 	outputFile << lineY( origin, size.Y / 5 );
@@ -232,7 +232,7 @@ void tailor( string * outputFileName, pll & origin, pair <ll,ll> size, ll sizeZ 
 	
 	outputFile << "SP2;\n"; //select pen 2: engraving
 	
-	origin = basePoll;
+	origin = basePoint;
 	
 	outputFile << move( origin, make_pair( 1.5 * wallThk + sizeZ, -sizeZ - wallThk ) );
 	outputFile << lineY( origin, -size.Y );
@@ -273,22 +273,20 @@ void tailor( string * outputFileName, pll & origin, pair <ll,ll> size, ll sizeZ 
 	outputFile << lineY( origin, size.Y );
 	
 	outputFile << lineX( origin, -size.X );
-	
-	origin = basePoll;
-	
+
 	outputFile.close();
 }
 
-void writeToFile( string fileName, vector<pll> & sourceDimensions ){
+void writeToFile( string fileName, vector<pii> & sourceDimensions ){
 	ofstream outputFile;
 	
 	outputFile.open( fileName );
 	outputFile << "IN;\nLT;\n"; //initialize file
 	outputFile.close();
 	
-	pll origin( 0, 0 );
-	for( ll i = 0; i < sourceDimensions.size(); ++i ){
-		pll boxDimensions( 
+	pii origin( 0, 0 );
+	for( int i = 0; i < sourceDimensions.size(); ++i ){
+		pii boxDimensions( 
 			4 * packThk + 6 * wallThk + 2 * ( sourceDimensions[i].X + foamThk ),
 			2 * packThk + 3 * wallThk + ( sourceDimensions[i].Y + foamThk ) 
 		);
@@ -296,11 +294,11 @@ void writeToFile( string fileName, vector<pll> & sourceDimensions ){
 		tailor( 
 			&fileName, 
 			origin, 
-			make_pair( (ll)( sourceDimensions[i].X + foamThk ), (ll)( sourceDimensions[i].Y + foamThk ) ), 
+			make_pair( (int)( sourceDimensions[i].X + foamThk ), (int)( sourceDimensions[i].Y + foamThk ) ), 
 			packThk
 		);
 				
-		origin = make_pair( 0, origin.Y + boxDimensions.Y );
+		origin = make_pair( origin.X + boxDimensions.X, 0 );
 		
 	}
 	outputFile.open ( fileName, std::ios::app );
