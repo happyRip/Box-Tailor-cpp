@@ -31,4 +31,4 @@ string moveY( pii & origin, int distanceY );
 
 void tailor( string * outputFileName, pii origin, pair <int,int> size, int sizeZ );
 
-void writeToFile( string fileName, vector<pii> & sourceDimensions );
+void writeToFile( string fileName, vector<pii> & boxDimensions );

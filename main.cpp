@@ -13,7 +13,7 @@ using std::vector;
 using std::string;
 
 unsigned int howManyObjects;
-vector<pii> sourceDimensions;
+vector<pii> boxDimensions;
 
 int main(){
 	cout << " Enter object count: ";
@@ -30,14 +30,14 @@ int main(){
 		cout << " Enter input file name: ";
 		cin >> inputFileName;
 		
-		sourceDimensions.push_back( calculateSize( inputFileName ) );
+		boxDimensions.push_back( calculateSize( inputFileName ) );
 	}
 	
 	string outputFileName;
 	cout << " Enter output file name: ";
 	cin >> outputFileName;
 
-	writeToFile( outputFileName, sourceDimensions );
+	writeToFile( outputFileName, boxDimensions );
 	
 	return 0;
 }

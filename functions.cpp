@@ -277,7 +277,7 @@ void tailor( string * outputFileName, pii origin, pair <int,int> size, int sizeZ
 	outputFile.close();
 }
 
-void writeToFile( string fileName, vector<pii> & sourceDimensions ){
+void writeToFile( string fileName, vector<pii> & boxDimensions ){
 	ofstream outputFile;
 	
 	outputFile.open( fileName );
@@ -285,16 +285,16 @@ void writeToFile( string fileName, vector<pii> & sourceDimensions ){
 	outputFile.close();
 	
 	pii origin( 0, 0 );
-	for( int i = 0; i < sourceDimensions.size(); ++i ){
+	for( int i = 0; i < boxDimensions.size(); ++i ){
 		pii boxDimensions( 
-			4 * packThk + 6 * wallThk + 2 * ( sourceDimensions[i].X + foamThk ),
-			2 * packThk + 3 * wallThk + ( sourceDimensions[i].Y + foamThk ) 
+			4 * packThk + 6 * wallThk + 2 * ( boxDimensions[i].X + foamThk ),
+			2 * packThk + 3 * wallThk + ( boxDimensions[i].Y + foamThk ) 
 		);
 		
 		tailor( 
 			&fileName, 
 			origin, 
-			make_pair( (int)( sourceDimensions[i].X + foamThk ), (int)( sourceDimensions[i].Y + foamThk ) ), 
+			make_pair( (int)( boxDimensions[i].X + foamThk ), (int)( boxDimensions[i].Y + foamThk ) ), 
 			packThk
 		);
 				
