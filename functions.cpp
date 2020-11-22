@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 #include <string>
 #include <vector>
 #include <time.h>
@@ -65,10 +63,6 @@ void getExtremes( int x, int y, vector<pii> & Extremes ){
 	Extremes[MIN].Y = min( Extremes[MIN].Y, y );
 }
 
-=======
-#include <bits/stdc++.h>
-#include <time.h>
->>>>>>> parent of 83c23ea... it works!
 
 pii calculateSize( string fileName ){ //looks for extreme values of an object in a *.plt file to find its dimensions for box fitting purposes
 	ifstream inputFile;
@@ -83,7 +77,6 @@ pii calculateSize( string fileName ){ //looks for extreme values of an object in
 	while( getline( inputFile, line ) ){
 		pii value;
 
-<<<<<<< HEAD
 		if( line[0] == 'P' ){
 			value = getValues( line );
 			getExtremes( value.X, value.Y, Extremes );
@@ -96,10 +89,6 @@ pii calculateSize( string fileName ){ //looks for extreme values of an object in
 	pii result( Extremes[MAX].X - Extremes[MIN].X, Extremes[MAX].Y  - Extremes[MIN].Y );
 	return result;
 }
-=======
-#include <bits/stdc++.h>
-#include <time.h>
->>>>>>> parent of 83c23ea... it works!
 
 string line( pii & origin, pii distance ){
 	origin.X += distance.X;
@@ -115,7 +104,6 @@ string line( pii & origin, pii distance ){
 	return result;
 }
 
-<<<<<<< HEAD
 string lineX( pii & origin, int distanceX ){
 	origin.X += distanceX;
 	
@@ -288,16 +276,6 @@ void tailor( string * outputFileName, pii origin, pair <int,int> size, int sizeZ
 
 	outputFile.close();
 }
-=======
-//void tailor( double x, double y );
-
-//string drawLine( double originX, double originY, double length, double angle );
->>>>>>> parent of 83c23ea... it works!
-=======
-//void tailor( double x, double y );
-
-//string drawLine( double originX, double originY, double length, double angle );
->>>>>>> parent of 83c23ea... it works!
 
 void writeToFile( string fileName, vector<pii> & boxDimensions ){
 	ofstream outputFile;

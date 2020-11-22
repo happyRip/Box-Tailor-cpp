@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 #include <utility>
 #include <cstdlib>
 #include <string>
@@ -16,13 +14,6 @@ pii getValues( string line );
 string getFileName( string filePath );
 
 void getExtremes( int x, int y, vector<pii> & Extremes );
-=======
-//function declarations go here
-
-//void tailor( double x, double y );
-
-//string drawLine( double originX, double originY, double length, double angle );
->>>>>>> parent of 83c23ea... it works!
 
 pii calculateSize( string fileName );
 
@@ -37,13 +28,6 @@ string move( pii & origin, pii distance );
 string moveX( pii & origin, int distanceX );
 
 string moveY( pii & origin, int distanceY );
-=======
-//function declarations go here
-
-//void tailor( double x, double y );
-
-//string drawLine( double originX, double originY, double length, double angle );
->>>>>>> parent of 83c23ea... it works!
 
 void tailor( string * outputFileName, pii origin, pair <int,int> size, int sizeZ );
 

@@ -36,29 +36,8 @@ int main(){
 	string outputFileName;
 	cout << " Enter output file name: ";
 	cin >> outputFileName;
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 	writeToFile( outputFileName, boxDimensions );
 	
 	return 0;
-=======
-=======
->>>>>>> parent of 83c23ea... it works!
-	
-	ofstream outputFile;
-	outputFile.open ( outputFileName );
-	
-	outputFile << "IN;\n";
-	outputFile << "SP0;\n";
-	
-	outputFile << "PD" << sourceDimensions[X][0] << ",0;\n";
-	outputFile << "PD" << sourceDimensions[X][0] << "," << sourceDimensions[Y][0] << ";\n";
-	outputFile << "PD0," << sourceDimensions[Y][0] << ";\n";
-	outputFile << "PD0,0;\n";
-	
-	outputFile << "PU;";
-	
-	outputFile.close();
->>>>>>> parent of 83c23ea... it works!
 }
