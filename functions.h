@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include <utility>
 #include <cstdlib>
 #include <string>
@@ -15,13 +14,6 @@ pii getValues( string line );
 string getFileName( string filePath );
 
 void getExtremes( int x, int y, vector<pii> & Extremes );
-=======
-//function declarations go here
-
-//void tailor( double x, double y );
-
-//string drawLine( double originX, double originY, double length, double angle );
->>>>>>> parent of 83c23ea... it works!
 
 pii calculateSize( string fileName );
 
