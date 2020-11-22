@@ -37,11 +37,14 @@ int main(){
 	cout << " Enter output file name: ";
 	cin >> outputFileName;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	writeToFile( outputFileName, boxDimensions );
 	
 	return 0;
 =======
+=======
+>>>>>>> parent of 83c23ea... it works!
 	
 	ofstream outputFile;
 	outputFile.open ( outputFileName );

@@ -15,5 +15,9 @@
 =======
 #define X 0
 #define Y 1
+<<<<<<< HEAD
+#define Unit 40 //40 units per mm, 1016 units per inch
+>>>>>>> parent of 83c23ea... it works!
+=======
 #define Unit 40 //40 units per mm, 1016 units per inch
 >>>>>>> parent of 83c23ea... it works!
