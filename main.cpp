@@ -13,31 +13,39 @@ using std::vector;
 using std::string;
 
 unsigned int howManyObjects;
-vector<pii> boxDimensions;
+vpii objDimensions;
 
-int main(){
-	cout << " Enter object count: ";
-	cin >> howManyObjects;
-	while( cin.fail() ){
-		cin.clear();
-		cin.ignore();
-		cout << "  Incorrect value.\n Enter object count: ";
+int main( int argc, char * argv[] ){
+	
+	if( argc == 1 ){
+		cout << " Enter object count: ";
 		cin >> howManyObjects;
-	}
-	
-	for( unsigned int i = 0; i < howManyObjects; ++i ){
-		string inputFileName;
-		cout << " Enter input file name: ";
-		cin >> inputFileName;
+		while( cin.fail() ){
+			cin.clear();
+			cin.ignore();
+			cout << "  Incorrect value.\n Enter object count: ";
+			cin >> howManyObjects;
+		}
 		
-		boxDimensions.push_back( calculateSize( inputFileName ) );
+		for( unsigned int i = 0; i < howManyObjects; ++i ){
+			string inputFileName;
+			cout << " Enter input file name: ";
+			cin >> inputFileName;
+			
+			objDimensions.push_back( calculateSize( inputFileName ) );
+		}
+	}else {
+		for( int i = 1; i < argc; ++i ){
+			objDimensions.push_back( calculateSize( argv[i] ) );
+		}
 	}
 	
-	string outputFileName;
+	string outputFileName = "output.plt";
+/*
 	cout << " Enter output file name: ";
 	cin >> outputFileName;
-
-	writeToFile( outputFileName, boxDimensions );
+*/
+	writeToFile( outputFileName, objDimensions );
 	
 	return 0;
 }
