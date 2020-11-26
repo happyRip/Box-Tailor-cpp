@@ -79,8 +79,6 @@ void getExtremes( int x, int y, vector<pii> & Extremes )
 
 pii calcBoxSize( pii objDimensions )
 {
-	//cout << "boxX: " << 4 * packThk + 5.8 * wallThk + 2 * ( objDimensions.X + foamThk ) << " boxY: " << 2 * packThk + 2.5 * wallThk + ( objDimensions.Y + foamThk ) << endl;
-	
 	return make_pair( 
 			4 * packThk + 5.8 * wallThk + 2 * ( objDimensions.X + foamThk ),
 			2 * packThk + 2.5 * wallThk + ( objDimensions.Y + foamThk )
@@ -89,13 +87,9 @@ pii calcBoxSize( pii objDimensions )
 
 pii calcObjSize( pii boxDimensions )
 {
-	//cout << "objX: " << ( boxDimensions.X - 4 * packThk - 5.8 * wallThk - 2 * foamThk ) / 2 << " objY: " << ( boxDimensions.Y - 2 * packThk - 2.5 * wallThk - foamThk ) << endl;
-	
 	return make_pair( 
 			( boxDimensions.X - 4 * packThk - 5.8 * wallThk - 2 * foamThk ) / 2,
-			//4 * packThk + 5.8 * wallThk + 2 * ( objDimensions.X + foamThk ),
 			( boxDimensions.Y - 2 * packThk - 2.5 * wallThk - foamThk )
-			//2 * packThk + 2.5 * wallThk + ( objDimensions.Y + foamThk )
 	);
 }
 
@@ -132,6 +126,14 @@ pii calculateSize( string fileName )
 	
 	pii result( Extremes[MAX].X - Extremes[MIN].X, Extremes[MAX].Y  - Extremes[MIN].Y );
 	return result;
+}
+
+vpii calculateBoxesDimensions( vpii objDimensions )
+{
+	for( int i = 0; i < objDimensions.size(); ++i )
+		objDimensions[i] = calcBoxSize( objDimensions[i] );
+		
+	return objDimensions;
 }
 
 string line( pii & origin, pii distance )
@@ -224,14 +226,9 @@ void tailor( string outputFileName, pii origin, pair <int,int> size, int sizeZ )
 {
 	ofstream outputFile;
 	outputFile.open( outputFileName, std::ios::app );
-	//outputFile << "aaa\n";
-	if( outputFile.is_open() )
-		cout << "\n THE FILE IS OPEN!\n\n";
 		
 	pii basePoint = origin;
-	
-	cout << "oXx: " << origin.X << " oYy: " << origin.Y << endl;
-	
+
 	outputFile << "SP1;\n"; //select pen 1: cutting
 	
 	outputFile << moveX( origin, 3 * wallThk + sizeZ ); 
@@ -329,9 +326,7 @@ void tailor( string outputFileName, pii origin, pair <int,int> size, int sizeZ )
 	outputFile << lineY( origin, size.Y );
 	
 	outputFile << lineX( origin, -size.X );
-	
-	//cout << "done\n";
-	
+
 	outputFile.close();
 }
 
@@ -394,13 +389,10 @@ vector<vpii> shelfPack( vpii boxDimensions,  pii boardSize )
 			}
 		}
 */
-		
-		//cout << "i: " << i << endl;
+
 		if( i == -1 ){
 			currentPosition.X = 0;
-			//cout << "  rowHeight: " << rowHeight << endl;
 			currentPosition.Y += rowHeight;
-			//cout << "CP:\n  X: " << currentPosition.X << " Y: " << currentPosition.Y << endl;
 
 			sortedDimensions.push_back( bottomLeftCorner );
 			bottomLeftCorner.clear();
@@ -410,9 +402,7 @@ vector<vpii> shelfPack( vpii boxDimensions,  pii boardSize )
 		
 		if( currentPosition.X == 0 )	
 			rowHeight = boxDimensions[i].Y;
-		
-		//cout << "H: " << rowHeight << endl;
-			
+
 		currentPosition.X += boxDimensions[i].X;
 		bottomLeftCorner.push_back( boxDimensions[i] );
 		
@@ -422,74 +412,95 @@ vector<vpii> shelfPack( vpii boxDimensions,  pii boardSize )
 			sortedDimensions.push_back( bottomLeftCorner );
 			bottomLeftCorner.clear();
 		}
-		
-		//cout << "cpX: " << currentPosition.X << " cpY: " << currentPosition.Y << endl;
 	}
-	
+/*	
 	for( int i = 0; i < sortedDimensions.size(); ++i ){
-		//cout << "i: " << i << endl;
         for( int j = 0; j < sortedDimensions[i].size(); ++j ){
             cout << "X: " << sortedDimensions[i][j].X / Unit << ", Y: " << sortedDimensions[i][j].Y / Unit << ";   "; 
 		}
         cout << endl; 
 	} 
-	
-	//cout << "S: " << sortedDimensions.size() << endl;
-	//cout << "S0: " << sortedDimensions[0].size() << endl;
-	
+*/
 	return sortedDimensions;
 }
-/*
-vector<vpii> splitToBoards( vector<vpii> sortedDimensions, pii boardSize )
+
+void prepareFile( string fileName, pii boardSize )
 {
-	int sum = 0, i = 0;
-	vector<vpii> board;
-	while( !sortedDimensions.empty() ){
-		if( sum + sortedDimensions[i]][0].Y < boardSize.Y ){
-			board.push_back( sortedDimensions[i] );
-			sortedDimensions.erase( sortedDimensions.begin() + i );
-		}else {
-			writeToFile( , board
-		}
-	}
-}
-*/
-void writeToFile( string fileName, vpii objDimensions )
-{
-	pii boardSize( 3200 * Unit, 2100 * Unit );
-	
-	for( int i = 0; i < objDimensions.size(); ++i )
-		objDimensions[i] = calcBoxSize( objDimensions[i] );
-	
-	vector<vpii> sortedDimensions = shelfPack( objDimensions, boardSize );
-	
 	ofstream outputFile;
 	
 	outputFile.open( fileName );
 	outputFile << "IN;\nLT;\n"; //initialize file
+	outputFile << "SP3\n";
+	pii origin( 0, 0 );
+	outputFile << lineY( origin, -boardSize.Y );
+	outputFile << lineX( origin, boardSize.X );
+	outputFile << lineY( origin, boardSize.Y );
+	outputFile << lineX( origin, -boardSize.X );
 	outputFile.close();
+}
+
+void endFile( string fileName )
+{
+	ofstream outputFile;
+	
+	outputFile.open( fileName, std::ios::app );
+	outputFile << "SP0;\n";
+	outputFile.close();
+}
+
+void writeToFile( string fileName, vector<vpii> board, pii boardSize )
+{
+	prepareFile( fileName, boardSize );
 	
 	pii origin( 0, 0 );
-	
-	for( int i = 0; i < sortedDimensions.size(); ++i ){
-		cout << ".size: " << sortedDimensions.size() << endl;
-		cout << "[i].size: " << sortedDimensions[i].size() << endl;
-		for( int j = 0; j < sortedDimensions[i].size(); ++j ){
-			cout << "S" << endl;
+	for( int i = 0; i < board.size(); ++i ){
+		for( int j = 0; j < board[i].size(); ++j ){
 			tailor(
 				fileName,
 				origin,
-				calcObjSize( sortedDimensions[i][j] ),
+				calcObjSize( board[i][j] ),
 				packThk
 			);
-			cout << "origin.X: " << origin.X << " origin.Y: " << origin.Y << endl;
-			origin.X += sortedDimensions[i][j].X;
+			origin.X += board[i][j].X;
 		}
 		origin.X = 0;
-		origin.Y -= sortedDimensions[i][0].Y;
+		origin.Y -= board[i][0].Y;
 	}
+	
+	endFile( fileName );
+}
 
-	outputFile.open ( fileName, std::ios::app );
-	outputFile << "SP0;\n";
-	outputFile.close();
+void splitToBoards( vector<vpii> & sortedDimensions, pii boardSize )
+{	
+	string fileName = "output", extension = ".plt", iterator;
+	int sum = 0, i = 0, n = 0;
+	vector<vpii> board;
+
+	while( !sortedDimensions.empty() ){	
+		if( sum + sortedDimensions[i][0].Y <= boardSize.Y ){
+
+			board.push_back( sortedDimensions[i] );
+			sortedDimensions.erase( sortedDimensions.begin() + i );
+			sum += sortedDimensions[i][0].Y;
+		}else {
+			string temp = fileName;
+			iterator = to_string( n );
+			n++;
+			temp.append( iterator );
+			temp. append( extension );
+			
+			writeToFile( temp, board, boardSize );
+			board.clear();
+			sum = i = 0;
+		}
+	}
+	if( !board.empty() ){
+		
+		string temp = fileName;
+		iterator = to_string( n );
+		n++;
+		temp.append( iterator );
+		temp. append( extension );
+		writeToFile( temp, board, boardSize );
+	}
 }

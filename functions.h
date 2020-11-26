@@ -25,6 +25,8 @@ pii calcBoxSize( pii objDimensions );
 
 pii calcObjSize( pii boxDimensions );
 
+vpii calculateBoxesDimensions( vpii objDimensions );
+
 string line( pii & origin, pii distance );
 
 string lineX( pii & origin, int distanceX );
@@ -43,6 +45,10 @@ int lessOrEqual( vector<pii> boxDimensions, int target, char argument );
 
 vector<vpii> shelfPack( vector<pii> boxDimensions,  pii boardSize );
 
-vector<vpii> splitToBoards( vector<vpii> sortedDimensions, pii boardSize );
+void prepareFile( string fileName, pii boardSize );
 
-void writeToFile( string fileName, vector<pii> boxDimensions );
+void endFile( string fileName );
+
+void writeToFile( string fileName, vector<pii> boxDimensions, pii boardSize );
+
+void splitToBoards( vector<vpii> & sortedDimensions, pii boardSize );

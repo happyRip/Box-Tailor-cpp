@@ -14,6 +14,7 @@ using std::string;
 
 unsigned int howManyObjects;
 vpii objDimensions;
+pii boardSize( 3200 * Unit, 2100 * Unit );
 
 int main( int argc, char * argv[] ){
 	
@@ -39,13 +40,14 @@ int main( int argc, char * argv[] ){
 			objDimensions.push_back( calculateSize( argv[i] ) );
 		}
 	}
-	
+
 	string outputFileName = "output.plt";
-/*
-	cout << " Enter output file name: ";
-	cin >> outputFileName;
-*/
-	writeToFile( outputFileName, objDimensions );
+
+	vpii boxDimensions = calculateBoxesDimensions( objDimensions );
+	
+	vector<vpii> sortedDimensions = shelfPack( boxDimensions, boardSize );
+	
+	splitToBoards( sortedDimensions, boardSize );
 	
 	return 0;
 }
